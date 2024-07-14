@@ -24,8 +24,18 @@ contract AadhaarWalletRegistry {
         anonAadhaarVerifierAddr = _verifierAddr;
     }
 
-    function addressToUint256(address _addr) private pure returns (uint256) {
-        return uint256(uint160(_addr));
+    function hashAddress(address _addr) public pure returns (uint256) {
+        // Convert address to uint256
+        uint256 addrAsUint = uint256(uint160(_addr));
+        
+        // Pad to 32 bytes (256 bits)
+        bytes32 paddedAddr = bytes32(addrAsUint);
+        
+        // Apply keccak256 hash
+        bytes32 hashed = keccak256(abi.encodePacked(paddedAddr));
+        
+        // Shift right by 3 bits and return
+        return uint256(hashed) >> 3;
     }
 
     function registerWallet(
@@ -38,7 +48,7 @@ contract AadhaarWalletRegistry {
         uint[4] memory revealArray,
         uint[8] memory groth16Proof
     ) public {
-        require(addressToUint256(msg.sender) == signal, "Signal does not match sender");
+        require(hashAddress(msg.sender) == signal, "Signal does not match sender");
         require(
             IAnonAadhaar(anonAadhaarVerifierAddr).verifyAnonAadhaarProof(
                 nullifierSeed,
