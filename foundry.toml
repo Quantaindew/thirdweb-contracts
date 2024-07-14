@@ -4,6 +4,8 @@ out = 'out'
 libs = ['lib']
 remappings = [
     '@thirdweb-dev/=node_modules/@thirdweb-dev/',
+    '@anon-aadhaar/=node_modules/@anon-aadhaar',
+    '@openzeppelin/=node_modules/@openzeppelin'
 ]
 
 
